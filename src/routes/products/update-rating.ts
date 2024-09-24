@@ -3,6 +3,7 @@ import { z } from "zod";
 import { FastifyInstance } from "fastify";
 import { prisma } from "../../lib/prisma";
 import { BadRequest } from "../../_errors/bad-request";
+import { authenticate } from "../auth/authenticate";
 
 // Validação dos parâmetros e corpo da requisição
 const paramsSchema = z.object({
@@ -15,6 +16,7 @@ export async function updateRating(app: FastifyInstance) {
     .put('/product/rating/:id', {
       schema: {
         params: paramsSchema,
+        preHandler: [authenticate],
         body: z.object({
           rating: z.number().min(0).max(5), // Valor da avaliação entre 0 e 5
           userId: z.string()

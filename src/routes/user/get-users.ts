@@ -3,6 +3,7 @@ import { z } from "zod";
 import { FastifyInstance } from "fastify";
 import { prisma } from "../../lib/prisma";
 import { BadRequest } from "../../_errors/bad-request";
+import { authenticate } from "../auth/authenticate";
 
 export async function getUsers(app: FastifyInstance) {
   app
@@ -11,6 +12,7 @@ export async function getUsers(app: FastifyInstance) {
       schema: {
         
       },
+      preHandler: [authenticate],
     },
     async (request, reply) => {
       const users = await prisma.user.findMany();

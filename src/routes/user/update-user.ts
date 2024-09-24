@@ -4,6 +4,7 @@ import { FastifyInstance } from "fastify";
 import { prisma } from "../../lib/prisma";
 import { BadRequest } from "../../_errors/bad-request";
 import bcrypt from "bcrypt";
+import { authenticate } from "../auth/authenticate";
 
 // Defina o esquema Zod para os parâmetros
 const paramsSchema = z.object({
@@ -25,6 +26,7 @@ export async function updateUser(app: FastifyInstance) {
           email: z.string().optional()
         }), 
       },
+      preHandler: [authenticate],
     },
     async (request, reply) => {
       const { email } = request.params as z.infer<typeof paramsSchema>;

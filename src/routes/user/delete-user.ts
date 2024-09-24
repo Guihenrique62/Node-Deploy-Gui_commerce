@@ -3,6 +3,7 @@ import { z } from "zod";
 import { FastifyInstance } from "fastify";
 import { prisma } from "../../lib/prisma";
 import { BadRequest } from "../../_errors/bad-request";
+import { authenticate } from "../auth/authenticate";
 
 // Defina o esquema Zod para os parâmetros
 const paramsSchema = z.object({
@@ -16,6 +17,7 @@ export async function delUser(app: FastifyInstance) {
       schema: {
         params: paramsSchema
       },
+      preHandler: [authenticate],
     },
     async (request, reply) => {
       const { email } = request.params 

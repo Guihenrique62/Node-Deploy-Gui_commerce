@@ -2,12 +2,14 @@ import { ZodTypeProvider } from "fastify-type-provider-zod";
 import { FastifyInstance } from "fastify";
 import { prisma } from "../../lib/prisma";
 import { BadRequest } from "../../_errors/bad-request";
+import { authenticate } from "../auth/authenticate";
 
 export async function getProducts(app: FastifyInstance) {
   app
     .withTypeProvider<ZodTypeProvider>()
     .get('/products', {
       schema: {},
+      preHandler: [authenticate],
     },
     async (request, reply) => {
       // Busca os produtos com as avaliações (ratings)

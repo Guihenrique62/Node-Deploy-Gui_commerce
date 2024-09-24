@@ -3,6 +3,7 @@ import { z } from "zod";
 import { FastifyInstance } from "fastify";
 import { prisma } from "../../lib/prisma";
 import { BadRequest } from "../../_errors/bad-request";
+import { authenticate } from "../auth/authenticate";
 
 // Defina o esquema Zod para os parâmetros
 const paramsSchema = z.object({
@@ -16,6 +17,7 @@ export async function updateProduct(app: FastifyInstance) {
     .put('/product/:id', {
       schema: {
         params: paramsSchema,
+        preHandler: [authenticate],
         body: z.object({
           name: z.string().optional(),
           price: z.number().optional(),
@@ -28,6 +30,13 @@ export async function updateProduct(app: FastifyInstance) {
     async (request, reply) => {
       const { id } = request.params as z.infer<typeof paramsSchema>;
       const updateData = request.body
+
+      // Pega o id do usuário autenticado do token
+      const { id: userId, acess } = request.user;
+      // Verifica se o usuário é admin
+      if (acess !== 0) {
+        return reply.status(403).send({ message: 'Acesso negado. Apenas administradores podem Modificar produtos.' });
+      }
 
       // Verifica se o usuário existe
       const product = await prisma.product.findUnique({
