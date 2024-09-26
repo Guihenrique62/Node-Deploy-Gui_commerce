@@ -18,7 +18,7 @@ export async function buyProduct(app: FastifyInstance) {
     .post('/product/buy/:id', {
       schema: {
         params: paramsSchema,
-        body: bodySchema, // Corrigido: usou o esquema definido para o corpo
+        body: bodySchema,
         
       },
       preHandler: [authenticate],
@@ -28,11 +28,16 @@ export async function buyProduct(app: FastifyInstance) {
       const { quantity } = request.body;
 
       const product = await prisma.product.findUnique({
-        where: { id }, // Certifique-se de que id seja um número
+        where: { id }, 
         select: {
           amount: true
         }
       });
+
+      const userId = request.user?.id;
+      if (!userId) {
+        return reply.status(401).send({ message: "Usuário não autenticado." });
+      }
 
       if (!product) {
         return reply.status(404).send({ message: 'Produto não encontrado.' });
@@ -59,13 +64,29 @@ export async function buyProduct(app: FastifyInstance) {
         },
       });
 
+      // Registre a compra na tabela Purchase
+      const newPurchase = await prisma.purchase.create({
+        data: {
+          userId, // O ID do usuário autenticado
+          productId: id, // ID do produto comprado
+          status: "Comprado", // Status inicial da compra (pode ser alterado conforme necessário)
+        },
+      });
+
       return reply.status(200).send({
-        message: 'Produto comprado com sucesso.' ,
+        message: "Produto comprado com sucesso.",
         product: {
           productID: updatedProduct.id,
           name: updatedProduct.name,
           amount: updatedProduct.amount,
         },
+        purchase: {
+          purchaseID: newPurchase.id,
+          status: newPurchase.status,
+          userId: newPurchase.userId,
+          productId: newPurchase.productId,
+        },
       });
-    });
+    }
+  );
 }

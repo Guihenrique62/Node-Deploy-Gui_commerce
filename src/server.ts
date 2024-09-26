@@ -13,7 +13,9 @@ import { createRating } from './routes/products/create-rating';
 import { updateRating } from './routes/products/update-rating';
 import { loginRoute } from './routes/auth/login';
 import { authenticate } from './routes/auth/authenticate';
-import { buyProduct } from './routes/products/buy-product';
+import { buyProduct } from './routes/purchase/buy-product';
+import { getUserPurchases } from './routes/purchase/get-userPurchases';
+import { getPurchases } from './routes/purchase/get-purchases';
 
 const app = fastify() 
 
@@ -30,11 +32,14 @@ app.register(updateProduct)
 app.register(delProduct)
 app.register(createRating)
 app.register(updateRating)
+
+// Routes Purchase
 app.register(buyProduct)
+app.register(getUserPurchases)
+app.register(getPurchases)
 
 
 app.register(loginRoute)
-
 
 
 app.setValidatorCompiler(validatorCompiler)

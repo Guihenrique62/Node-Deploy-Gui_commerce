@@ -16,6 +16,7 @@ model User {
   acess Int
   wallet Float
   createdAt DateTime @default(now())
+  purchases Purchase[]
 }
 
 model Product {
@@ -27,6 +28,7 @@ model Product {
   amount Int
   img_url String
   ratings     Rating[]
+  purchases   Purchase[]
 }
 
 model Rating {
@@ -37,4 +39,17 @@ model Rating {
   product   Product  @relation(fields: [productId], references: [id])
   productId Int
   userId    String   
+}
+
+
+model Purchase {
+  id          Int      @id @default(autoincrement())
+  status      String   // Status da compra (ex: 'pending', 'completed', etc.)
+  createdAt   DateTime @default(now())
+  
+  // Relacionamentos
+  user        User     @relation(fields: [userId], references: [id])
+  userId      String
+  product     Product  @relation(fields: [productId], references: [id])
+  productId   Int
 }
