@@ -6,24 +6,19 @@ import { BadRequest } from "../../_errors/bad-request";
 import { generateRandomString } from "../../untils/randomString";
 import { authenticate } from "../auth/authenticate";
 
-export async function createProduct(app: FastifyInstance) {
+export async function createCategory(app: FastifyInstance) {
   app
     .withTypeProvider<ZodTypeProvider>()
-    .post('/product', {
+    .post('/category', {
       preHandler: [authenticate], // Middleware para validar o token
       schema: {
         body: z.object({
-          name: z.string(),
-          price: z.number(),
-          amount: z.number(),
-          description: z.string(),
-          img_url: z.string(),
-          categoryId: z.number()
+          name: z.string()
         }),
       },
     },
     async (request, reply) => {
-      const { name, price, amount, description, img_url, categoryId } = request.body;
+      const { name } = request.body;
 
       // Pega o id do usuário autenticado do token
       const { id: userId, acess } = request.user;
@@ -34,21 +29,18 @@ export async function createProduct(app: FastifyInstance) {
       }
 
       // Verifica se o nome do produto já existe
-      const productName = await prisma.product.findFirst({
+      const categoryName = await prisma.category.findFirst({
         where: { name }
       });
-      if (productName) {
-        throw new BadRequest('Produto já cadastrado!');
+      if (categoryName) {
+        throw new BadRequest('Categoria já cadastrado!');
       }
-
-      const tag = generateRandomString(8);
-
       // Cria o produto
-      const product = await prisma.product.create({
-        data: { name, price, amount, description, img_url, tag, categoryId },
+      const category = await prisma.category.create({
+        data: { name },
       });
 
-      return reply.status(201).send({ productId: product.id });
+      return reply.status(201).send({ categoryId: category.id });
     });
 }
 

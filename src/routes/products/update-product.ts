@@ -24,6 +24,7 @@ export async function updateProduct(app: FastifyInstance) {
           amount: z.number().optional(),
           description: z.string().optional(),
           img_url: z.string().optional(),
+          category: z.number().optional()
         }), 
       },
     },
@@ -55,8 +56,8 @@ export async function updateProduct(app: FastifyInstance) {
           price: updateData.price,
           amount: updateData.amount,
           description: updateData.description,
-          img_url: updateData.img_url
-
+          img_url: updateData.img_url,
+          categoryId: updateData.category
         }, // Dados a serem atualizados
       });
 
@@ -69,6 +70,8 @@ export async function updateProduct(app: FastifyInstance) {
           amount: updatedProduct.amount,
           description: updatedProduct.description,
           tag: updatedProduct.tag,
+          categoryId: updateData.category
+
         },
       });
     });

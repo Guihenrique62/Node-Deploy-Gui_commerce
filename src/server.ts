@@ -16,6 +16,9 @@ import { authenticate } from './routes/auth/authenticate';
 import { buyProduct } from './routes/purchase/buy-product';
 import { getUserPurchases } from './routes/purchase/get-userPurchases';
 import { getPurchases } from './routes/purchase/get-purchases';
+import { createCategory } from './routes/categories/create-category';
+import { getProductsOfCategory } from './routes/categories/get-category';
+import { getCategories } from './routes/categories/get-categories';
 
 const app = fastify() 
 
@@ -37,6 +40,11 @@ app.register(updateRating)
 app.register(buyProduct)
 app.register(getUserPurchases)
 app.register(getPurchases)
+
+//Routes Categorys
+app.register(createCategory)
+app.register(getProductsOfCategory)
+app.register(getCategories)
 
 
 app.register(loginRoute)

@@ -29,6 +29,8 @@ model Product {
   img_url String
   ratings     Rating[]
   purchases   Purchase[]
+  category    Category?  @relation(fields: [categoryId], references: [id])
+  categoryId  Int?
 }
 
 model Rating {
@@ -52,4 +54,10 @@ model Purchase {
   userId      String
   product     Product  @relation(fields: [productId], references: [id])
   productId   Int
+}
+
+model Category {
+  id        Int       @id @default(autoincrement())
+  name      String
+  products  Product[] // Relação inversa com Product
 }

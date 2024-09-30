@@ -20,6 +20,7 @@ export async function getProducts(app: FastifyInstance) {
               stars: true,
             },
           },
+          category: true
         },
       });
 
@@ -27,7 +28,7 @@ export async function getProducts(app: FastifyInstance) {
       if (products.length === 0) {
         throw new BadRequest('Não existe Produtos na base de dados!');
       }
-
+      
       // Mapeia os produtos calculando a média e o total de avaliações
       return reply.status(200).send({
         products: products.map((product: any) => {
@@ -35,7 +36,7 @@ export async function getProducts(app: FastifyInstance) {
           const averageRating = totalRatings > 0
             ? product.ratings.reduce((acc: number, rating: any) => acc + rating.stars, 0) / totalRatings
             : null; // Se não houver avaliações, retorna null
-
+          
           return {
             productId: product.id,
             name: product.name,
@@ -45,7 +46,8 @@ export async function getProducts(app: FastifyInstance) {
             tag: product.tag,
             img_url: product.img_url,
             averageRating: averageRating,  // Média de avaliações
-            totalRatings: totalRatings      // Total de avaliações
+            totalRatings: totalRatings,   // Total de avaliações
+            category: product.category?.name
           };
         }),
       });
